@@ -37,10 +37,6 @@ entryPoints:
 
 http:
     middlewares:
-        auth:
-            basicAuth:
-                users:
-                    - "XXX"
         secHeaders:
             headers:
                 frameDeny: true
