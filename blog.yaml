@@ -63,13 +63,13 @@ services:
         constraints:
           - node.role==manager
       labels:
+        - "traefik.enable=true"
         - "traefik.http.routers.blog.entrypoints=websecure"
         - "traefik.http.routers.blog.rule=Host(`blog.example.com`)"
         - "traefik.http.routers.blog.service=blog"
         - "traefik.http.routers.blog.tls.certresolver=prodssl"
         - "traefik.http.routers.blog.tls=true"
         - "traefik.http.services.blog.loadbalancer.server.port=2368"
-
       restart_policy:
         condition: on-failure
 
@@ -86,6 +86,7 @@ services:
       COMMENTO_POSTGRES: postgres://postgres:postgres@commento-db:5432/commento?sslmode=disable
     deploy:
         labels:
+          - "traefik.enable=true"
           - "traefik.http.routers.commento.entrypoints=websecure"
           - "traefik.http.routers.commento.rule=Host(`commento.example.com`)"
           - "traefik.http.routers.commento.service=commento"
