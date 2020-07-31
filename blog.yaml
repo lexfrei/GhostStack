@@ -1,0 +1,105 @@
+version: "3.7"
+
+volumes:
+  traefik_data: {}
+  ghost_data: {}
+  commento_postgres_data: {}
+
+networks:
+  traefik:
+    driver: overlay
+    name: traefik
+    internal: true
+  internet:
+    driver: overlay
+  commento:
+    driver: overlay
+    name: commento
+    internal: true
+
+services:
+  # https://hub.docker.com/_/traefik
+  traefik:
+    image: traefik:v2.3
+    networks:
+      - traefik
+      - monitoring
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - traefik_data:/acme/
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml
+    ports:
+      - target: 80
+        published: 80
+        mode: host
+      - target: 443
+        published: 443
+        mode: host
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == manager
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+
+  # https://hub.docker.com/_/ghost
+  ghost:
+    image: ghost:3.27.0-alpine
+    hostname: ghost
+    networks:
+      - traefik
+    volumes:
+      - ghost_data:/var/lib/ghost/content
+      - ./ghost/config.production.json:/var/lib/ghost/config.production.json
+    environment:
+      - NODE_ENV=production
+    deploy:
+      placement:
+        constraints:
+          - node.role==manager
+      labels:
+        - "traefik.http.routers.blog.entrypoints=websecure"
+        - "traefik.http.routers.blog.rule=Host(`blog.example.com`)"
+        - "traefik.http.routers.blog.service=blog"
+        - "traefik.http.routers.blog.tls.certresolver=prodssl"
+        - "traefik.http.routers.blog.tls=true"
+        - "traefik.http.services.blog.loadbalancer.server.port=2368"
+
+      restart_policy:
+        condition: on-failure
+
+  # https://gitlab.com/commento/commento/container_registry/
+  commento:
+    image: registry.gitlab.com/commento/commento:v1.8.0
+    networks:
+      - traefik
+      - commento
+    environment:
+      COMMENTO_FORBID_NEW_OWNERS: "true"      # Comment this line for initial sign-up
+      COMMENTO_ORIGIN: https://commento.example.com
+      COMMENTO_PORT: 8080
+      COMMENTO_POSTGRES: postgres://postgres:postgres@commento-db:5432/commento?sslmode=disable
+    deploy:
+        labels:
+          - "traefik.http.routers.commento.entrypoints=websecure"
+          - "traefik.http.routers.commento.rule=Host(`commento.example.com`)"
+          - "traefik.http.routers.commento.service=commento"
+          - "traefik.http.routers.commento.tls.certresolver=prodssl"
+          - "traefik.http.routers.commento.tls=true"
+          - "traefik.http.services.commento.loadbalancer.server.port=8080"
+
+  # https://hub.docker.com/_/postgres
+  commento-db:
+    image: postgres:12-alpine
+    networks:
+      - commento
+    environment:
+      POSTGRES_DB: commento
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - commento_postgres_data:/var/lib/postgresql/data
