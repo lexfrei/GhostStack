@@ -14,9 +14,10 @@ providers:
         swarmMode: true
         watch: true
         network: "traefik"
+        exposedByDefault: false
     file:
         watch: true
-        filename:   "/etc/traefik/traefik.yml"
+        filename: "/etc/traefik/traefik.yml"
 
 api:
     dashboard: false
@@ -33,15 +34,29 @@ entryPoints:
         address: :443
         http:
             middlewares:
-              - secHeaders@file
+                - secHeaders@file
+                - cache@file
+                - compress@file
 
 http:
     middlewares:
         secHeaders:
             headers:
-                frameDeny: true
                 sslRedirect: true
                 stsIncludeSubdomains: true
                 stspreload: true
                 stsseconds: 31536000
-                
+        cache:
+            plugin:
+                cache:
+                    path: /tmp
+        compress:
+            compress: {}
+
+experimental:
+    pilot:
+        token: "XXX"
+    plugins:
+        cache:
+            modulename: "github.com/containous/plugin-simplecache"
+            version: "v0.1.1"

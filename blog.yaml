@@ -16,9 +16,9 @@ networks:
     internal: true
 
 services:
-  # https://hub.docker.com/_/traefik
+  # https://hub.docker.com/_/traefik?tab=tags
   traefik:
-    image: traefik:v2.3
+    image: traefik:v2.3.0-rc3
     networks:
       - traefik
     volumes:
@@ -47,7 +47,7 @@ services:
       restart_policy:
         condition: any
 
-  # https://hub.docker.com/_/ghost
+  # https://hub.docker.com/_/ghost?tab=tags
   ghost:
     image: ghost:3.27.0-alpine
     hostname: ghost
@@ -84,19 +84,21 @@ services:
       COMMENTO_ORIGIN: https://commento.example.com
       COMMENTO_PORT: 8080
       COMMENTO_POSTGRES: postgres://postgres:postgres@commento-db:5432/commento?sslmode=disable
+      COMMENTO_GZIP_STATIC: "true"
+      COMMENTO_AKISMET_KEY: "21da4fc354e6"
     deploy:
         labels:
           - "traefik.enable=true"
           - "traefik.http.routers.commento.entrypoints=websecure"
-          - "traefik.http.routers.commento.rule=Host(`commento.example.com`)"
+          - "traefik.http.routers.commento.rule=Host(`commento.lex.la`)"
           - "traefik.http.routers.commento.service=commento"
           - "traefik.http.routers.commento.tls.certresolver=prodssl"
           - "traefik.http.routers.commento.tls=true"
           - "traefik.http.services.commento.loadbalancer.server.port=8080"
 
-  # https://hub.docker.com/_/postgres
+  # https://hub.docker.com/_/postgres?tab=tags
   commento-db:
-    image: postgres:12-alpine
+    image: postgres:12.3-alpine
     networks:
       - commento
     environment:
@@ -105,3 +107,4 @@ services:
       POSTGRES_PASSWORD: postgres
     volumes:
       - commento_postgres_data:/var/lib/postgresql/data
+ 

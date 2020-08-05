@@ -10,6 +10,20 @@
             "filename": "/var/lib/ghost/content/data/ghost.db"
         }
     },
+    "mail": {
+        "from": "'Test User' <postmaster@sandboxb63424b537c2469d895f7f74f4384d69.mailgun.org>",
+        "transport": "SMTP",
+        "options": {
+            "service": "Mailgun",
+            "host": "smtp.mailgun.org",
+            "port": 587,
+            "secureConnection": false,
+            "auth": {
+                "user": "XXX.mailgun.org",
+                "pass": "XXX"
+            }
+        }
+    },
     "logging": {
         "level": "info",
         "rotation": {
