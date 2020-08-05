@@ -85,7 +85,7 @@ services:
       COMMENTO_PORT: 8080
       COMMENTO_POSTGRES: postgres://postgres:postgres@commento-db:5432/commento?sslmode=disable
       COMMENTO_GZIP_STATIC: "true"
-      COMMENTO_AKISMET_KEY: "21da4fc354e6"
+      COMMENTO_AKISMET_KEY: "XXX"
     deploy:
         labels:
           - "traefik.enable=true"
