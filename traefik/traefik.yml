@@ -20,7 +20,7 @@ providers:
         filename: "/etc/traefik/traefik.yml"
 
 api:
-    dashboard: false
+    dashboard: true
 
 entryPoints:
     web:
@@ -48,7 +48,7 @@ http:
                 stsseconds: 31536000
         cache:
             plugin:
-                cache:
+                plugin-simplecache:
                     path: /tmp
         compress:
             compress: {}
@@ -57,6 +57,6 @@ experimental:
     pilot:
         token: "XXX"
     plugins:
-        cache:
-            modulename: "github.com/containous/plugin-simplecache"
+        plugin-simplecache:
+            moduleName: "github.com/containous/plugin-simplecache"
             version: "v0.1.1"

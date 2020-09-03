@@ -6,23 +6,23 @@ volumes:
   commento_postgres_data: {}
 
 networks:
+  internet: {}
   traefik:
     driver: overlay
-    name: traefik
     internal: true
   commento:
     driver: overlay
-    name: commento
     internal: true
 
 services:
   # https://hub.docker.com/_/traefik?tab=tags
   traefik:
-    image: traefik:v2.3.0-rc3
+    image: traefik:v2.3.0-rc4
     networks:
       - traefik
+      - internet
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - traefik_data:/acme/
       - ./traefik/traefik.yml:/etc/traefik/traefik.yml
     ports:
@@ -32,10 +32,6 @@ services:
       - target: 443
         published: 443
         mode: host
-      - target: 8080
-        published: 8080
-        protocol: tcp
-        mode: ingress
     deploy:
       mode: global
       placement:
@@ -49,7 +45,7 @@ services:
 
   # https://hub.docker.com/_/ghost?tab=tags
   ghost:
-    image: ghost:3.27.0-alpine
+    image: ghost:3.31.3-alpine
     hostname: ghost
     networks:
       - traefik
@@ -87,18 +83,18 @@ services:
       COMMENTO_GZIP_STATIC: "true"
       COMMENTO_AKISMET_KEY: "XXX"
     deploy:
-        labels:
-          - "traefik.enable=true"
-          - "traefik.http.routers.commento.entrypoints=websecure"
-          - "traefik.http.routers.commento.rule=Host(`commento.lex.la`)"
-          - "traefik.http.routers.commento.service=commento"
-          - "traefik.http.routers.commento.tls.certresolver=prodssl"
-          - "traefik.http.routers.commento.tls=true"
-          - "traefik.http.services.commento.loadbalancer.server.port=8080"
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.commento.entrypoints=websecure"
+        - "traefik.http.routers.commento.rule=Host(`commento.example.com`)"
+        - "traefik.http.routers.commento.service=commento"
+        - "traefik.http.routers.commento.tls.certresolver=prodssl"
+        - "traefik.http.routers.commento.tls=true"
+        - "traefik.http.services.commento.loadbalancer.server.port=8080"
 
   # https://hub.docker.com/_/postgres?tab=tags
   commento-db:
-    image: postgres:12.3-alpine
+    image: postgres:12.4-alpine
     networks:
       - commento
     environment:
@@ -107,4 +103,3 @@ services:
       POSTGRES_PASSWORD: postgres
     volumes:
       - commento_postgres_data:/var/lib/postgresql/data
- 
