@@ -53,10 +53,11 @@ http:
         compress:
             compress: {}
 
+pilot:
+    token: "XXX"
+
 experimental:
-    pilot:
-        token: "XXX"
     plugins:
         plugin-simplecache:
-            moduleName: "github.com/containous/plugin-simplecache"
-            version: "v0.1.1"
+            moduleName: "github.com/traefik/plugin-simplecache"
+            version: "v0.2.1"

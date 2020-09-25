@@ -17,7 +17,7 @@ networks:
 services:
   # https://hub.docker.com/_/traefik?tab=tags
   traefik:
-    image: traefik:v2.3.0-rc4
+    image: traefik:v2.3.0
     networks:
       - traefik
       - internet
@@ -39,13 +39,13 @@ services:
           - node.role == manager
       update_config:
         parallelism: 1
-        delay: 10s
+        delay: 20s
       restart_policy:
         condition: any
 
   # https://hub.docker.com/_/ghost?tab=tags
   ghost:
-    image: ghost:3.31.3-alpine
+    image: ghost:3.34.1-alpine
     hostname: ghost
     networks:
       - traefik
@@ -58,6 +58,9 @@ services:
       placement:
         constraints:
           - node.role==manager
+      update_config:
+        parallelism: 1
+        delay: 20s
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.blog.entrypoints=websecure"
