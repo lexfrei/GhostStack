@@ -19,9 +19,6 @@ providers:
         watch: true
         filename: "/etc/traefik/traefik.yml"
 
-api:
-    dashboard: true
-
 entryPoints:
     web:
         address: :80
