@@ -1,4 +1,5 @@
 {
+    "enabled": true,
     "docker-compose": {
         "enabled": true,
         "fileMatch": [
