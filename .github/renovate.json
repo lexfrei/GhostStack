@@ -1,5 +1,10 @@
 {
     "docker-compose": {
         "enabled": true
-    }
+    },
+    "schedule": [
+        "before 2am"
+    ],
+    "timezone": "Europe/Moscow",
+    "dependencyDashboard": true
 }
