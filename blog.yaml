@@ -97,7 +97,7 @@ services:
 
   # https://hub.docker.com/_/postgres?tab=tags
   commento-db:
-    image: postgres:12.4-alpine
+    image: postgres:12.10-alpine
     networks:
       - commento
     environment:
