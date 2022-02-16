@@ -1,6 +1,9 @@
 {
     "docker-compose": {
-        "enabled": true
+        "enabled": true,
+        "fileMatch": [
+            "blog.yaml"
+        ]
     },
     "schedule": [
         "before 2am"
