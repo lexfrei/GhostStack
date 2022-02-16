@@ -4,7 +4,8 @@
         "enabled": true,
         "fileMatch": [
             "blog.yaml"
-        ]
+        ],
+        "automerge": true
     },
     "schedule": [
         "before 2am"
