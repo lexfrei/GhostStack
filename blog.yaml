@@ -17,7 +17,7 @@ networks:
 services:
   # https://hub.docker.com/_/traefik?tab=tags
   traefik:
-    image: traefik:v2.3.0
+    image: traefik:v2.6.1
     networks:
       - traefik
       - internet
