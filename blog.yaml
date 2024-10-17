@@ -45,7 +45,7 @@ services:
 
   # https://hub.docker.com/_/ghost?tab=tags
   ghost:
-    image: ghost:4.36.0-alpine
+    image: ghost:5.96.2-alpine
     hostname: ghost
     networks:
       - traefik
